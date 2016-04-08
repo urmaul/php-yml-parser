@@ -1,7 +1,7 @@
 <?php
 
 namespace Sirian\YMLParser;
-
+/*test*/
 class Shop
 {
     /**
