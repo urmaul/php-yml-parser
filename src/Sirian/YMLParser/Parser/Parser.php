@@ -11,6 +11,8 @@ class Parser extends EventDispatcher
 {
     protected $xmlReader;
     protected $factory;
+    protected $file = '';
+    protected $encoding = '';
 
     private $path = [];
 
@@ -26,15 +28,29 @@ class Parser extends EventDispatcher
 
     public function parse($file)
     {
+    	$this->file = $file;
         $this->path = [];
 
         $this->xmlReader->open($file);
         $this->read();
         $this->xmlReader->close();
     }
+    
+    protected function getEncoding()
+    {
+    	$forRead 	  = 500;
+    	$handle       = fopen($this->file, "r");
+	    $fileContents = fread($handle, $forRead);
+	    fclose($handle);
+
+        $fileContents   = $this->strBetween($fileContents, "<?xml","?>");
+        $this->encoding = $this->strBetween($fileContents, 'encoding="','"');
+        return $this->encoding;
+    }
 
     protected function read()
     {
+    	$this->getEncoding();
         $shop = null;
         $xml = $this->xmlReader;
         while ($xml->read()) {
@@ -56,6 +72,7 @@ class Parser extends EventDispatcher
                 switch ($path) {
                     case 'yml_catalog/shop':
                         $shop = $this->factory->createShop();
+                        $shop = $this->parseShop($shop);
                         $this->dispatch('shop', new ShopEvent($shop));
                         break;
                     case 'yml_catalog/shop/currencies':
@@ -201,6 +218,37 @@ class Parser extends EventDispatcher
             $offer->setCategory($shop->getCategory($categoryId));
         }
         return $offer;
+    }
+    
+    protected function parseShop(Shop $shop)
+    {
+    	$forRead 	  = 9000;
+    	$handle       = fopen($this->file, "r");
+	    $fileContents = fread($handle, $forRead);
+	    fclose($handle);
+
+	    $posShop = strpos($fileContents,"<shop>");
+	    $posCurr = strpos($fileContents,"<currencies>");
+	    $posCats = strpos($fileContents,"<categories>");
+
+	    $posCurr = ($posCurr===false) ? 999999 : $posCurr;
+	    $posCats = ($posCats===false) ? 999999 : $posCats;
+
+	    $posStart= $posShop;
+	    $posStop = ($posCats<$posCurr) ? $posCats : $posCurr;
+
+	    $xml = substr($fileContents, $posStart, $posStop-$posStart);
+        if(strtolower($this->encoding) != 'utf-8') $xml = iconv($this->encoding, 'utf-8', $xml);
+	    $xml = simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?>' . $xml . '</shop>');
+
+	    $shop->setName((string)$xml->name);
+	    $shop->setUrl((string)$xml->url);
+	    $shop->setPlatform((string)$xml->platform);
+	    $shop->setAgency((string)$xml->agency);
+	    $shop->setVersion((string)$xml->version);
+	    $shop->setEmail((string)$xml->email);
+
+	    return $shop;
     }
 
     protected function loadElementXml()
