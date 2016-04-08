@@ -5,6 +5,8 @@ namespace Sirian\YMLParser\Offer;
 use Sirian\YMLParser\Category;
 use Sirian\YMLParser\Currency;
 use Sirian\YMLParser\Shop;
+use Sirian\YMLParser\Exception\CurrencyNotFoundException;
+use Sirian\YMLParser\Exception\CategoryNotFoundException;
 
 class Offer
 {
@@ -242,5 +244,35 @@ class Offer
         $this->xml = $xml;
 
         return $this;
+    }
+
+    public function toArray()
+    {
+        $arr = [];
+        $arr['id']              = (int) $this->getId();
+        $arr['type']            = $this->getType();
+        $arr['name']            = $this->getName();
+        $arr['description']     = $this->getDescription();
+        $arr['isAvailable']     = (bool)  $this->isAvailable();
+        $arr['pictures']        = $this->getPictures();
+        $arr['typePrefix']      = $this->getTypePrefix();
+        $arr['attributes']      = $this->getAttributes();
+        $arr['model']           = $this->getModel();
+        $arr['price']           = (float) $this->getPrice();
+        $arr['currency']        = [];
+
+        if($this->getCurrency() instanceof \Sirian\YMLParser\Currency) {
+            $arr['currency']['id'] = $this->getCurrency()->getId();
+            $arr['currency']['rate'] = $this->getCurrency()->getRate();
+        } else {
+            throw new CurrencyNotFoundException("Currency not found in offer ".$arr['id']);
+        }
+
+        if($this->getCategory() instanceof \Sirian\YMLParser\Category) {
+            $arr['category'] = $this->getCategory()->getId();
+        } else {
+            throw new CategoryNotFoundException("Category not found in offer ".$arr['id']);
+        }
+        return $arr;
     }
 }

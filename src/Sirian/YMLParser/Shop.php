@@ -193,4 +193,17 @@ class Shop
         $this->localDeliveryCost = (float)$localDeliveryCost;
         return $this;
     }
+
+    public function toArray()
+    {
+        $arr = [];
+        $arr['name']            = $this->getName();
+        $arr['url']             = $this->getUrl();        
+        $arr['platform']        = $this->getPlatform();       
+        $arr['agency']          = $this->getAgency();     
+        $arr['version']         = $this->getVersion();        
+        $arr['email']           = $this->getEmail();      
+
+        return $arr;
+    }
 }
