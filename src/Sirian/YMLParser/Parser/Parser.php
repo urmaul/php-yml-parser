@@ -29,6 +29,9 @@ class Parser extends EventDispatcher
 
     public function parse($file)
     {
+        if(!file_exists($file)) throw new FileNotFoundException("File not found");
+        if(!is_readable($file)) throw new FileNotFoundException("File read error");
+        
     	$this->file = $file;
         $this->path = [];
 
