@@ -36,6 +36,17 @@ class Parser extends EventDispatcher
         $this->xmlReader->close();
     }
     
+    public function strBetween($string = '', $start, $end)
+    {
+	$string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        $result = substr($string, $ini, $len);
+        return $result;
+    }
+    
     protected function getEncoding()
     {
     	$forRead 	  = 500;
