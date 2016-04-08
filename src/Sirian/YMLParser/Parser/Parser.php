@@ -3,6 +3,7 @@
 namespace Sirian\YMLParser\Parser;
 
 use Sirian\YMLParser\Exception\UnsupportedOfferTypeException;
+use Sirian\YMLParser\Exception\FileNotFoundException;
 use Sirian\YMLParser\Factory\Factory;
 use Sirian\YMLParser\Shop;
 use Sirian\YMLParser\Helper\Str;
@@ -29,8 +30,8 @@ class Parser extends EventDispatcher
 
     public function parse($file)
     {
-        if(!file_exists($file)) throw new FileNotFoundException("File not found");
-        if(!is_readable($file)) throw new FileNotFoundException("File read error");
+        if(!file_exists($file)) throw new FileNotFoundException("File not found - ".$file);
+        if(!is_readable($file)) throw new FileNotFoundException("File read error - ".$file);
         
     	$this->file = $file;
         $this->path = [];
