@@ -5,12 +5,9 @@
 
 ### Создаем парсер
 
-Понадобится неймспейс
-
-    use \Sirian\YMLParser\Parser\Parser;
-
 Создаем экземпляр парсера 
 
+    use \Sirian\YMLParser\Parser\Parser;
     $parser = new Parser();
 
 #### Парсим товары
