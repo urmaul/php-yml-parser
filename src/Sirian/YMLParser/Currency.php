@@ -75,4 +75,19 @@ class Currency
         $this->plus = $plus;
         return $this;
     }
+
+    public function toArray()
+    {
+        $arr = [];
+        $methods = get_class_methods($this);
+        foreach($methods as $method)
+        {
+            if(strpos($method,'get')===0)
+            {
+                $name = strtolower(substr($method,3));
+                $arr[$name] = $this->$method();
+            }
+        }
+        return $arr;
+    }
 }

@@ -60,4 +60,13 @@ class Category
     {
         return null !== $this->parent;
     }
+
+    public function toArray()
+    {
+        $arr = [];
+        $arr['id'] = $this->getId();
+        $arr['name'] = $this->getName();
+        $arr['parent'] = ($this->getParent() instanceof Category) ? $this->getParent()->getId() : 0;
+        return $arr;
+    }
 }
