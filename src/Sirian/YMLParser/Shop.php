@@ -73,6 +73,31 @@ class Shop
      * @var Currency[]
      */
     protected $currencies = [];
+    /**
+     * Дата формирования прайс листа в двух форматах
+     * @var date
+     * @var udate
+     */
+    protected $date;
+    protected $udate;
+
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    public function getUdate()
+    {
+        return $this->udate;
+    }
+
+
+    public function setDate($date)
+    {
+        $this->date = $date;
+        $this->udate = strtotime($date);
+    }
 
     public function getName()
     {
@@ -199,10 +224,13 @@ class Shop
         $arr = [];
         $arr['name']            = $this->getName();
         $arr['url']             = $this->getUrl();        
+        $arr['company']         = $this->getCompany();        
         $arr['platform']        = $this->getPlatform();       
         $arr['agency']          = $this->getAgency();     
         $arr['version']         = $this->getVersion();        
         $arr['email']           = $this->getEmail();      
+        $arr['date']            = $this->getDate();      
+        $arr['udate']            = $this->getUdate();
 
         return $arr;
     }

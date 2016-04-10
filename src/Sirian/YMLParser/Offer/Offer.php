@@ -53,6 +53,8 @@ class Offer
     protected $typePrefix;
 
     protected $pictures = [];
+    
+    protected $params = [];
 
     protected $attributes = [];
 
@@ -194,6 +196,19 @@ class Offer
         return $this;
     }
 
+    public function addParam($param)
+    {
+        $key = (string)$param->attributes()['name'];
+        $value = (string)$param;
+        $this->params[$key] = (string)$param;
+        return $this;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
+    }
+
     public function getTypePrefix()
     {
         return $this->typePrefix;
@@ -256,10 +271,11 @@ class Offer
         $arr['isAvailable']     = (bool)  $this->isAvailable();
         $arr['pictures']        = $this->getPictures();
         $arr['typePrefix']      = $this->getTypePrefix();
-        $arr['attributes']      = $this->getAttributes();
         $arr['model']           = $this->getModel();
         $arr['price']           = (float) $this->getPrice();
         $arr['currency']        = [];
+        $arr['params']          = $this->getParams();
+        // $arr['attributes']      = $this->getAttributes();
 
         if($this->getCurrency() instanceof \Sirian\YMLParser\Currency) {
             $arr['currency']['id'] = $this->getCurrency()->getId();

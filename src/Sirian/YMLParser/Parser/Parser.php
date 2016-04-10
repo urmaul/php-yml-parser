@@ -79,9 +79,13 @@ class Parser extends EventDispatcher
 
 
                 switch ($path) {
+                    case 'yml_catalog':
+                        $date = $this->xmlReader->getAttribute('date');
+                        break;
                     case 'yml_catalog/shop':
                         $shop = $this->factory->createShop();
                         $shop = $this->parseShop($shop);
+                        $shop->setDate($date);
                         $this->dispatch('shop', new ShopEvent($shop));
                         break;
                     case 'yml_catalog/shop/currencies':
@@ -209,7 +213,7 @@ class Parser extends EventDispatcher
             foreach (['add', 'set'] as $method) {
                 $method .= $this->camelize($field);
                 if (method_exists($offer, $method)) {
-                    call_user_func([$offer, $method], count($value->children()) ? $value : (string)$value);
+                    call_user_func([$offer, $method], count($value->children()) || $method=='addParam' ? $value : (string)$value);
                     break;
                 }
             }
@@ -255,7 +259,8 @@ class Parser extends EventDispatcher
 	    $shop->setPlatform((string)$xml->platform);
 	    $shop->setAgency((string)$xml->agency);
 	    $shop->setVersion((string)$xml->version);
-	    $shop->setEmail((string)$xml->email);
+        $shop->setEmail((string)$xml->email);
+	    $shop->setCompany((string)$xml->company);
 
 	    return $shop;
     }
