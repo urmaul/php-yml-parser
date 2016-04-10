@@ -27,6 +27,9 @@
     $parser->addListener('categories', function (CategoriesEvent $event) use (&$categories)
     {
         $categories = $event->getCategories();
+        if(is_array($categories))
+        	foreach($categories as $category)
+        		$category = $category->toArray();
     });
 
 #### Парсим параметры магизина и дату формирования прайс-листа
@@ -40,8 +43,12 @@
 
     $parser->addListener('currencies', function (CurrenciesEvent $event) use (&$currencies) 
     {
-      $currencies = $event->getCurrencies();
+        $currencies = $event->getCurrencies();
+        if(is_array($categories))
+            foreach($currencies as $currency)
+            	$currency = $currency->toArray();
     });
+
 
 #### Запускаем парсер
     try {
